@@ -1,24 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-### Daten einlesen x, y, label
-if len(sys.argv) != 2:
-  sys.stderr.write('Usage: {} <inputfile>\n'.format(sys.argv[0]))
-  exit(1)
 
-filename = sys.argv[1]
-try:
-    matrix  = np.genfromtxt(filename, delimiter=" ")
-except IOError as err:
-  sys.stderr.write('{}: {}\n'.format(filename,err))
-  exit(1)
-
-x = matrix[:,0]
-y = matrix[:,1]
-truelabels=matrix[matrix[:,2] != 0.0]
-falselabels=matrix[matrix[:,2] == 0.0]
-assert(len(x)==len(y))
-assert(len(truelabels)==len(falselabels))
 ##### z = theta_0 + theta_i * x_i +.....+ theta_n * x_n
 def z(theta, x):
     h = 0
@@ -28,7 +11,7 @@ def z(theta, x):
 
 ####sigmoid function
 def sigmoid(theta, x):
-    return 1/(1+np.exp(-z(theta,x)))
+    return 1/(1+np.exp(z(theta,x)))
 
 def h_theta(theta, x):
     return sigmoid(theta, x)
@@ -52,11 +35,34 @@ def stochastic_gradient_descent(x,y,alpha,degree_poly):
 def f(theta, x):
     return (theta[0] +theta[1]*x)*(-1/theta[2])
 
+### --- MAIN --- ###
+
+### Daten einlesen x, y, label
+if len(sys.argv) != 2:
+  sys.stderr.write('Usage: {} <inputfile>\n'.format(sys.argv[0]))
+  exit(1)
+
+filename = sys.argv[1]
+try:
+    matrix  = np.genfromtxt(filename, delimiter=" ")
+except IOError as err:
+  sys.stderr.write('{}: {}\n'.format(filename,err))
+  exit(1)
+
+
+x = matrix[:,0]
+y = matrix[:,1]
+truelabels=matrix[matrix[:,2] != 0.0]
+falselabels=matrix[matrix[:,2] == 0.0]
+assert(len(x)==len(y))
+assert(len(truelabels)==len(falselabels))
+
 theta = stochastic_gradient_descent(x,y,0.1,3)
 x2=[-3,3]
 y2=[f(theta,x2[0]),f(theta,x2[1])]
 
 print(theta)
+
 
 '''
 
